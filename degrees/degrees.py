@@ -1,6 +1,7 @@
 import csv
 import sys
 from collections import deque
+from util import Node, StackFrontier, QueueFrontier
 
 # Maps names to a set of corresponding person_ids
 names = {}
@@ -110,6 +111,8 @@ def shortest_path(source: int, target: int): # -> Optional[List[Tuple[int, int]]
 
         for movie, person in neighbors_for_person(last_person):
             path.append((movie, person))
+            visited.add(person)
+            print(path)
             if person == target:
                 return path
             elif person in visited:
