@@ -99,27 +99,28 @@ def shortest_path(source: int, target: int): # -> Optional[List[Tuple[int, int]]
 
     # store unique movie/person? person
     visited = set()
-    for movie, person in neighbors_for_person(source):
+    neighbors = neighbors_for_person(source)
+    for movie, person in neighbors:
         if person == target:
-            return movie, person
-        visited.add(person)
-        front.append([(movie, person)])
+            return [(movie, person)]
+        if person != source:
+            visited.add(person)
+            front.append([(movie, person)])
 
     while len(front) > 0:
         path = front.popleft()
         last_movie, last_person = path[-1]
 
         for movie, person in neighbors_for_person(last_person):
-            path.append((movie, person))
-            visited.add(person)
-            print(path)
             if person == target:
-                return path
-            elif person in visited:
-                # we are hitting a loop, quit
-                pass
-            else:
-                front.append(path)
+                new_path = path.copy()
+                new_path.append((movie, person))
+                return new_path
+            elif person not in visited:
+                visited.add(person)
+                new_path = path.copy()
+                new_path.append((movie, person))
+                front.append(new_path)
     return None
 
 
@@ -149,7 +150,7 @@ def person_id_for_name(name):
         return person_ids[0]
 
 
-def neighbors_for_person(person_id: int):
+def neighbors_for_person(person_id):
     """
     Returns (movie_id, person_id) pairs for people
     who starred with a given person.
